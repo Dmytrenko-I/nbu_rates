@@ -4,6 +4,7 @@ Gem for fetching currency from National bank of Ukraine
 
 Gem done by [this tutorial](https://www.youtube.com/watch?v=rTRzXBWGmvI) from [GoodProgrammer](https://www.youtube.com/channel/UCDPdTky4sQtQEwOLAe5v-NA)
 
+This is a version to parse JSON object (not XML) from NBU. Without Nokogiri and all dependencies of it.
 
 ## Installation
 

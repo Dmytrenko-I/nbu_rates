@@ -3,7 +3,6 @@
 require_relative 'nbu_rates/version'
 
 require 'open-uri'
-require 'nokogiri'
 require 'money'
 
 Money.rounding_mode = BigDecimal::ROUND_HALF_EVEN
@@ -31,24 +30,15 @@ class NbuRates
   private
 
   def parse!(date)
-    date = date.strftime('%d.%m.%Y')
-    url = "https://bank.gov.ua/NBU_Exchange/exchange?date=#{date}"
+    date = date.strftime('%Y%m%d')
+    url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?date=#{date}&json"
     
     response = URI.open(url).read
-    xml_doc = Nokogiri::XML(response)
+    json = JSON.parse(response)
 
-    result = 
-      xml_doc.css('ROW').map do |node| 
-        # amount -- price in UAH per X units
-        # units -- quantity of valute
-        amount = BigDecimal(node.css('Amount').text, 10)
-        units = node.css('Units').text.to_i
-        [
-          node.css('CurrencyCodeL').text, 
-          amount / units
-        ]
-      end
-
+    cc = json.map { |valute| valute['cc'] }
+    money_rate = json.map { |valute| valute['rate'] }
+    result = cc.zip(money_rate)
     result.push(['UAH', 1])
 
     @rates = result.to_h
