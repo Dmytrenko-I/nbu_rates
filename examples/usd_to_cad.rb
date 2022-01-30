@@ -1,22 +1,7 @@
-require 'open-uri'
-require 'nokogiri'
-require 'money'
+require_relative '../lib/nbu_rates'
 
-response = URI.open('https://bank.gov.ua/NBU_Exchange/exchange?date=19.12.2017').read
-xml_doc = Nokogiri::XML(response)
+usd = Money.new('1_50', 'USD')
 
-result = 
-  xml_doc.css('ROW').map do |node| 
-    # amount -- price in UAH per X units
-    # units -- quantity of valute
-    amount = BigDecimal(node.css('Amount').text, 10)
-    units = node.css('Units').text.to_i
-    [
-      node.css('CurrencyCodeL').text, 
-      amount / units
-    ]
-  end
+result = NbuRates.new.exchange(usd, 'CAD')
 
-result = result.to_h
-
-pp result["AUD"].to_f
+puts "1.5 USD ~> CAD: #{result.format}"

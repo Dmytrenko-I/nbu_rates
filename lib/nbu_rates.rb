@@ -7,14 +7,15 @@ require 'nokogiri'
 require 'money'
 
 Money.rounding_mode = BigDecimal::ROUND_HALF_EVEN
+Money.locale_backend = :currency
 
 class NbuRates
   attr_reader :refreshed_at
   
-  def initialize(date = nil)
+  def initialize(date = Date.today)
     @refreshed_at = Time.now
     
-    parse!
+    parse!(date)
   end
 
   def rate(currency_code)
@@ -23,13 +24,17 @@ class NbuRates
 
   def exchange(money, currency_to)
     currency_from = money.currency.iso_code
-    money.with_currency(currency_to) * rate(currency_from)
+    
+    money.with_currency(currency_to) * rate(currency_from) / rate(currency_to)
   end
 
   private
 
-  def parse!
-    response = URI.open('https://bank.gov.ua/NBU_Exchange/exchange?date=19.12.2017').read
+  def parse!(date)
+    date = date.strftime('%d.%m.%Y')
+    url = "https://bank.gov.ua/NBU_Exchange/exchange?date=#{date}"
+    
+    response = URI.open(url).read
     xml_doc = Nokogiri::XML(response)
 
     result = 
@@ -43,11 +48,9 @@ class NbuRates
           amount / units
         ]
       end
+
+    result.push(['UAH', 1])
+
     @rates = result.to_h
   end
 end
-
-
-# CurrencyCodeL
-# Money в грн
-# 
