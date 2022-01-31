@@ -25,7 +25,7 @@ Or install it yourself as:
 ## Usage
 
 ``` rb
-require 'cbr_rates'
+require 'nbu_rates'
 
 usd = Money.new('1_50', 'USD')
 
