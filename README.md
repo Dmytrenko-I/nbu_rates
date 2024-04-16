@@ -2,8 +2,6 @@
 
 Gem for fetching currency from National bank of Ukraine
 
-Gem done by [this tutorial](https://www.youtube.com/watch?v=rTRzXBWGmvI) from [GoodProgrammer](https://www.youtube.com/channel/UCDPdTky4sQtQEwOLAe5v-NA)
-
 This is a version to parse XML response. Version to parse JSON you can find at `nbu_json` branch. 
 
 ## Installation
